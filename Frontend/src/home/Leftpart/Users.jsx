@@ -1,7 +1,5 @@
-
-
 import React, { useEffect, useState } from "react";
-import User from "./User";
+import User from "./User.jsx";
 import useGetAllUsers from "../../context/useGetAllUsers";
 import { useSocketContext } from "../../context/SocketContext.jsx";
 

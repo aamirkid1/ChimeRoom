@@ -28,7 +28,6 @@ function Messages() {
       ) : (
         messages.length > 0 &&
         messages.map((message) => (
-          
           <div key={message._id} ref={lastMsgRef}>
             
 

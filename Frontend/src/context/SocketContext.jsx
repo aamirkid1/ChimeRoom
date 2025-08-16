@@ -48,7 +48,9 @@ export const SocketProvider = ({ children }) => {
 
         // ✅ If current chat is open with sender → just show the message
         if (selectedConversation?._id === senderId) {
-          setMessage([...messages, newMessage]);
+          setMessage((prev) => [...prev, newMessage]); // ✅ functional update
+
+          // setMessage([...messages, newMessage]);
         } else {
           // ✅ If not selected → increase unseen count
           incrementUnseen(senderId);

@@ -1,3 +1,18 @@
+// // import { create } from "zustand";
+
+// // const useConversation = create((set) => ({
+// //   selectedConversation: null,
+// //   setSelectedConversation: (selectedConversation) =>
+// //     set({ selectedConversation }),
+
+// //   messages: [],
+// //   setMessage: (messages) => set({ messages }),
+// // }));
+
+// // export default useConversation;
+
+//this is working properly---->
+
 // import { create } from "zustand";
 
 // const useConversation = create((set) => ({
@@ -6,12 +21,16 @@
 //     set({ selectedConversation }),
 
 //   messages: [],
-//   setMessage: (messages) => set({ messages }),
+//   setMessage: (updater) =>
+//     set((state) => ({
+//       messages:
+//         typeof updater === "function"
+//           ? updater(state.messages || [])  // Ensure messages is an array
+//           : (Array.isArray(updater) ? updater : []),  // fallback to empty array
+//     })),
 
-//   // 🔁 unseen message counts per user
 //   unseenMap: {},
 
-//   // ✅ Used in Users.jsx
 //   setUnseenMap: (map) => set({ unseenMap: map }),
 
 //   incrementUnseenCount: (userId) =>
@@ -34,52 +53,6 @@
 // export default useConversation;
 
 
-// // import { create } from "zustand";
-
-// // const useConversation = create((set) => ({
-// //   selectedConversation: null,
-// //   setSelectedConversation: (selectedConversation) =>
-// //     set({ selectedConversation, unseenMessages: {} }),
-
-// //   messages: [],
-// //   setMessage: (messages) => set({ messages }),
-
-// //   unseenMessages: {},
-// //   incrementUnseen: (userId) =>
-// //     set((state) => ({
-// //       unseenMessages: {
-// //         ...state.unseenMessages,
-// //         [userId]: (state.unseenMessages[userId] || 0) + 1,
-// //       },
-// //     })),
-// //   clearUnseen: (userId) =>
-// //     set((state) => ({
-// //       unseenMessages: {
-// //         ...state.unseenMessages,
-// //         [userId]: 0,
-// //       },
-// //     })),
-// // }));
-
-// // export default useConversation;
-
-
-
-
-// // import { create } from "zustand";
-
-// // const useConversation = create((set) => ({
-// //   selectedConversation: null,
-// //   setSelectedConversation: (selectedConversation) =>
-// //     set({ selectedConversation }),
-
-// //   messages: [],
-// //   setMessage: (messages) => set({ messages }),
-// // }));
-
-// // export default useConversation;
-
-
 import { create } from "zustand";
 
 const useConversation = create((set) => ({
@@ -92,15 +65,16 @@ const useConversation = create((set) => ({
     set((state) => ({
       messages:
         typeof updater === "function"
-          ? updater(state.messages || [])  // Ensure messages is an array
-          : (Array.isArray(updater) ? updater : []),  // fallback to empty array
+          ? updater(state.messages || []) // Ensure messages is an array
+          : (Array.isArray(updater) ? updater : []),
     })),
 
-  unseenMap: {},
+  unseenMap: {}, // { userId: count }
 
   setUnseenMap: (map) => set({ unseenMap: map }),
 
-  incrementUnseenCount: (userId) =>
+  // ⬇ Increase unseen count for specific user
+  incrementUnseen: (userId) =>
     set((state) => ({
       unseenMap: {
         ...state.unseenMap,
@@ -108,13 +82,13 @@ const useConversation = create((set) => ({
       },
     })),
 
+  // ⬇ Remove unseen entry for user (reset count)
   clearUnseen: (userId) =>
-    set((state) => ({
-      unseenMap: {
-        ...state.unseenMap,
-        [userId]: 0,
-      },
-    })),
+    set((state) => {
+      const updated = { ...state.unseenMap };
+      delete updated[userId]; // Instead of setting to 0
+      return { unseenMap: updated };
+    }),
 }));
 
 export default useConversation;
