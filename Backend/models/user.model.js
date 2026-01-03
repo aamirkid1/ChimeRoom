@@ -18,9 +18,14 @@ const userSchema = mongoose.Schema({
         type: String,
     },
       avatar: {
-    type: String,         // ✅ Add this line
-    required: true,       // ✅ Make it required if you always want avatar selected
+    type: String,         
+    required: true,      
+
+     
+  
+
   },
+  blockedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 }, { timestamps: true }); // createdAt & updatedAt
 
 const User = mongoose.model("User", userSchema);

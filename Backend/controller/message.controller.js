@@ -1,11 +1,40 @@
 // import { getReceiverSocketId, io } from "../SocketIO/server.js";
 // import Conversation from "../models/conversation.model.js";
 // import Message from "../models/message.model.js";
+// import User from "../models/user.model.js"; // ⬅ add this at top for blocking part
 // export const sendMessage = async (req, res) => {
 //   try {
 //     const { message } = req.body;
 //     const { id: receiverId } = req.params;
 //     const senderId = req.user._id; // current logged in user
+//        // 🚨 BLOCK CHECKS
+//     const sender = await User.findById(senderId);
+//     const receiver = await User.findById(receiverId);
+
+//     // 🔧 WRONG: you wrote `if (!User)` (User is the model, not the document).
+//     // Replace with sender/receiver checks:
+//     if (!sender || !receiver) {
+//       return res.status(404).json({ error: "User not found" });
+//     }
+
+//     // 🔧 WRONG: you wrote `User.blockedUsers` & `user.blockedUsers`
+//     // Need to check receiver's blocked list and sender's blocked list
+//     if (
+//       receiver.blockedUsers &&
+//       receiver.blockedUsers.some(id => id.toString() === senderId.toString())
+//     ) {
+//       return res.status(403).json({ error: "You are blocked by this user" });
+//     }
+
+//     if (
+//       sender.blockedUsers &&
+//       sender.blockedUsers.some(id => id.toString() === receiverId.toString())
+//     ) {
+//       return res.status(403).json({ error: "You have blocked this user" });
+//     }
+
+// // yha tk blocking part hai
+
 //     let conversation = await Conversation.findOne({
 //       members: { $all: [senderId, receiverId] },
 //     });
@@ -14,18 +43,11 @@
 //         members: [senderId, receiverId],
 //       });
 //     }
-//     // const newMessage = new Message({
-//     //   senderId,
-//     //   receiverId,
-//     //   message,
-//     // });
 //     const newMessage = new Message({
 //       senderId,
 //       receiverId,
 //       message,
-//       seen: false, // ✅ Mark as unseen when sending
 //     });
-
 //     if (newMessage) {
 //       conversation.messages.push(newMessage._id);
 //     }
@@ -47,24 +69,30 @@
 //   try {
 //     const { id: chatUser } = req.params;
 //     const senderId = req.user._id; // current logged in user
+
+//        // 🚨 BLOCK CHECK
+//     const currentUser = await User.findById(senderId);
+
+//     // 🔧 Add guard for missing user
+//     if (!currentUser) {
+//       return res.status(404).json({ error: "User not found" });
+//     }
+
+//     // 🔧 Add safe check for blockedUsers
+//     if (
+//       currentUser.blockedUsers &&
+//       currentUser.blockedUsers.some(id => id.toString() === chatUser.toString())
+//     ) {
+//       return res.status(200).json([]); // return empty chat
+//     }
+
+
 //     let conversation = await Conversation.findOne({
 //       members: { $all: [senderId, chatUser] },
 //     }).populate("messages");
 //     if (!conversation) {
 //       return res.status(201).json([]);
 //     }
-//     // ✅ New code to mark messages as seen
-//     await Message.updateMany(
-//       {
-//         senderId: chatUser,   // messages sent by the other user
-//         receiverId: senderId, // received by the logged-in user
-//         seen: false,          // only unseen messages
-//       },
-//       {
-//         $set: { seen: true },
-//       }
-//     );
-
 //     const messages = conversation.messages;
 //     res.status(201).json(messages);
 //   } catch (error) {
@@ -73,15 +101,43 @@
 //   }
 // };
 
-
 import { getReceiverSocketId, io } from "../SocketIO/server.js";
 import Conversation from "../models/conversation.model.js";
 import Message from "../models/message.model.js";
+import User from "../models/user.model.js"; // ⬅ required
+
+// ---------------- SEND MESSAGE ----------------
 export const sendMessage = async (req, res) => {
   try {
     const { message } = req.body;
     const { id: receiverId } = req.params;
     const senderId = req.user._id; // current logged in user
+
+    // 🚨 BLOCK CHECKS
+    const sender = await User.findById(senderId);
+    const receiver = await User.findById(receiverId);
+
+    if (!sender || !receiver) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // ✅ Case 1: Receiver has blocked sender
+    if (
+      receiver.blockedUsers &&
+      receiver.blockedUsers.some((id) => id.toString() === senderId.toString())
+    ) {
+      return res.status(403).json({ error: "You are blocked by this user" });
+    }
+
+    // ✅ Case 2: Sender has blocked receiver
+    if (
+      sender.blockedUsers &&
+      sender.blockedUsers.some((id) => id.toString() === receiverId.toString())
+    ) {
+      return res.status(403).json({ error: "You have blocked this user" });
+    }
+
+    // ✅ Proceed with message saving
     let conversation = await Conversation.findOne({
       members: { $all: [senderId, receiverId] },
     });
@@ -90,21 +146,25 @@ export const sendMessage = async (req, res) => {
         members: [senderId, receiverId],
       });
     }
+
     const newMessage = new Message({
       senderId,
       receiverId,
       message,
     });
+
     if (newMessage) {
       conversation.messages.push(newMessage._id);
     }
-    // await conversation.save()
-    // await newMessage.save();
-    await Promise.all([conversation.save(), newMessage.save()]); // run parallel
+
+    await Promise.all([conversation.save(), newMessage.save()]);
+
+    // Send message in real-time
     const receiverSocketId = getReceiverSocketId(receiverId);
     if (receiverSocketId) {
       io.to(receiverSocketId).emit("newMessage", newMessage);
     }
+
     res.status(201).json(newMessage);
   } catch (error) {
     console.log("Error in sendMessage", error);
@@ -112,18 +172,46 @@ export const sendMessage = async (req, res) => {
   }
 };
 
+// ---------------- GET MESSAGES ----------------
 export const getMessage = async (req, res) => {
   try {
-    const { id: chatUser } = req.params;
-    const senderId = req.user._id; // current logged in user
-    let conversation = await Conversation.findOne({
-      members: { $all: [senderId, chatUser] },
-    }).populate("messages");
-    if (!conversation) {
-      return res.status(201).json([]);
+    const { id: chatUserId } = req.params;
+    const senderId = req.user._id;
+
+    const currentUser = await User.findById(senderId);
+    if (!currentUser) {
+      return res.status(404).json({ error: "User not found" });
     }
-    const messages = conversation.messages;
-    res.status(201).json(messages);
+
+    // 🚨 BLOCK CHECKS
+    // If current user has blocked chatUser → empty messages
+    if (
+      currentUser.blockedUsers &&
+      currentUser.blockedUsers.some((id) => id.toString() === chatUserId.toString())
+    ) {
+      return res.status(200).json([]);
+    }
+
+    // If chatUser has blocked current user → empty messages
+    const chatUser = await User.findById(chatUserId);
+    if (
+      chatUser &&
+      chatUser.blockedUsers &&
+      chatUser.blockedUsers.some((id) => id.toString() === senderId.toString())
+    ) {
+      return res.status(200).json([]);
+    }
+
+    // ✅ Otherwise return conversation
+    let conversation = await Conversation.findOne({
+      members: { $all: [senderId, chatUserId] },
+    }).populate("messages");
+
+    if (!conversation) {
+      return res.status(200).json([]);
+    }
+
+    res.status(200).json(conversation.messages);
   } catch (error) {
     console.log("Error in getMessage", error);
     res.status(500).json({ error: "Internal server error" });

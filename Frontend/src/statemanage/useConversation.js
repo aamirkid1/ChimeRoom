@@ -1,58 +1,3 @@
-// // import { create } from "zustand";
-
-// // const useConversation = create((set) => ({
-// //   selectedConversation: null,
-// //   setSelectedConversation: (selectedConversation) =>
-// //     set({ selectedConversation }),
-
-// //   messages: [],
-// //   setMessage: (messages) => set({ messages }),
-// // }));
-
-// // export default useConversation;
-
-//this is working properly---->
-
-// import { create } from "zustand";
-
-// const useConversation = create((set) => ({
-//   selectedConversation: null,
-//   setSelectedConversation: (selectedConversation) =>
-//     set({ selectedConversation }),
-
-//   messages: [],
-//   setMessage: (updater) =>
-//     set((state) => ({
-//       messages:
-//         typeof updater === "function"
-//           ? updater(state.messages || [])  // Ensure messages is an array
-//           : (Array.isArray(updater) ? updater : []),  // fallback to empty array
-//     })),
-
-//   unseenMap: {},
-
-//   setUnseenMap: (map) => set({ unseenMap: map }),
-
-//   incrementUnseenCount: (userId) =>
-//     set((state) => ({
-//       unseenMap: {
-//         ...state.unseenMap,
-//         [userId]: (state.unseenMap[userId] || 0) + 1,
-//       },
-//     })),
-
-//   clearUnseen: (userId) =>
-//     set((state) => ({
-//       unseenMap: {
-//         ...state.unseenMap,
-//         [userId]: 0,
-//       },
-//     })),
-// }));
-
-// export default useConversation;
-
-
 import { create } from "zustand";
 
 const useConversation = create((set) => ({
@@ -87,8 +32,21 @@ const useConversation = create((set) => ({
     set((state) => {
       const updated = { ...state.unseenMap };
       delete updated[userId]; // Instead of setting to 0
-      return { unseenMap: updated };
+      return { unseenMap: updated }; 
     }),
+
+      // 🚨 NEW: block state
+  blockedUsers: [],
+
+  setBlockedUsers: (list) => set({ blockedUsers: list }),
+  addBlockedUser: (id) =>
+    set((state) => ({ blockedUsers: [...state.blockedUsers, id] })),
+  removeBlockedUser: (id) =>
+    set((state) => ({
+      blockedUsers: state.blockedUsers.filter((uid) => uid !== id),
+    })),
+
+    
 }));
 
 export default useConversation;

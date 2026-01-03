@@ -38,7 +38,7 @@ function Messages() {
 
       {!loading && messages.length === 0 && (
         <div>
-          <p className="text-center mt-[20%] text-[#1a2421]" >
+          <p className="text-center mt-[20%] text-[#1a2421] animate-fadeIn delay-200" >
             Say! Hi to start the conversation
           </p>
         </div>
