@@ -45,9 +45,11 @@ function Signup() {
       // await sendEmailVerification(userCredential.user);
 
       const actionCodeSettings = {
-        url: "http://localhost:3001/verify-email",
+        url: "http://localhost:5002/verify-email",   // ye 3001 se 5002 kiya hai
         handleCodeInApp: true,
       };
+
+      console.log("VERIFY EMAIL REDIRECT URL =", actionCodeSettings.url);
 
       await sendEmailVerification(
         userCredential.user,
@@ -57,7 +59,7 @@ function Signup() {
       toast.success(
         "Verification email sent. Please verify your email (Check your inbox and spam).",
         {
-          duration: 6000, 
+          duration: 6000,
         }
       );
 
@@ -95,7 +97,7 @@ function Signup() {
 
 
 
-        
+
 
         {/* Right side form */}
         <form

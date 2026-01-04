@@ -9,7 +9,7 @@ const secureRoute = async (req, res, next) => {
       return res.status(401).json({ error: "No token, authorization denied" });
     }
 
-    // ✅ Must match jwt/generateToken.js secret
+    //  Must match jwt/generateToken.js secret
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     if (!decoded) {

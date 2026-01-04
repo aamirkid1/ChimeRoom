@@ -33,4 +33,3 @@ router.post("/unblock", secureRoute, unblockUser);
 router.get("/blocked", secureRoute, getBlockedUsers);
 
 export default router;
-
