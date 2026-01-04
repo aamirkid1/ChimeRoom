@@ -14,7 +14,7 @@ export const SocketProvider = ({ children }) => {
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [authUser] = useAuth();
 
-  // ✅ Pull Zustand values for message and unseen count
+  //  Pull Zustand values for message and unseen count
   const {
     selectedConversation,
     setMessage,
@@ -26,7 +26,7 @@ export const SocketProvider = ({ children }) => {
     if (authUser) {
       const socket = io("http://localhost:5002", {
         query: {
-          userId: authUser.user._id, // yha per authUser.user._id   tha
+          userId: authUser.user._id, 
         },
       });
       
@@ -36,23 +36,23 @@ export const SocketProvider = ({ children }) => {
       setSocket(socket);
       socket.on("getOnlineUsers", (users) => {
         setOnlineUsers(users);
-         console.log("Online Users Received:", users); // ✅ Corrected
+         console.log("Online Users Received:", users); 
       });
 
      
 
 
-      // ✅ Handle incoming messages
+      // Handle incoming messages
       socket.on("newMessage", (newMessage) => {
         const senderId = newMessage.senderId;
 
-        // ✅ If current chat is open with sender → just show the message
+        //  If current chat is open with sender → just show the message
         if (selectedConversation?._id === senderId) {
-          setMessage((prev) => [...prev, newMessage]); // ✅ functional update
+          setMessage((prev) => [...prev, newMessage]); //  functional update
 
           // setMessage([...messages, newMessage]);
         } else {
-          // ✅ If not selected → increase unseen count
+          //  If not selected → increase unseen count
           incrementUnseen(senderId);
         }
       });
@@ -64,7 +64,7 @@ export const SocketProvider = ({ children }) => {
       }
     }
     // }, [authUser]);
-  }, [authUser, selectedConversation, messages]); // ✅ Added deps: selectedConversation, messages
+  }, [authUser, selectedConversation, messages]); //  Added deps: selectedConversation, messages
   return (
     <socketContext.Provider value={{ socket, onlineUsers }}>
       {children}

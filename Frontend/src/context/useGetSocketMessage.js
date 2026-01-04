@@ -8,7 +8,7 @@ const useGetSocketMessage = () => {
   const {
     setMessage,
     selectedConversation,
-    incrementUnseenCount, // ✅ correct name
+    incrementUnseenCount, //  correct name
   } = useConversation();
 
   const notificationRef = useRef(null);
@@ -48,7 +48,7 @@ const useGetSocketMessage = () => {
 }
 
       else if (fromId) {
-        incrementUnseenCount(fromId); // ✅ correct call
+        incrementUnseenCount(fromId); //  correct call
       }
     };
 

@@ -10,22 +10,17 @@ const userSchema = mongoose.Schema({
         required: true,
         unique: true,
     },
-    password: {
+    
+    isEmailVerified: { type: Boolean, default: false },
+    avatar: {
         type: String,
         required: true,
-    },
-    confirmPassword: {
-        type: String,
-    },
-      avatar: {
-    type: String,         
-    required: true,      
 
-     
-  
 
-  },
-  blockedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+
+
+    },
+    blockedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 }, { timestamps: true }); // createdAt & updatedAt
 
 const User = mongoose.model("User", userSchema);

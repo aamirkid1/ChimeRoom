@@ -6,6 +6,8 @@ import Login from "./components/Login";
 import { useAuth } from "./context/AuthProvider";
 import { Toaster } from "react-hot-toast";
 import Logout from "./home/left1/Logout";
+import VerifyEmail from "./components/VerifyEmail";
+
 
 import { Navigate, Route, Routes } from "react-router-dom";
 function App() {
@@ -42,6 +44,8 @@ function App() {
           path="/signup"
           element={authUser ? <Navigate to="/" /> : <Signup />}
         />
+        <Route path="/verify-email" element={<VerifyEmail />} />
+
       </Routes>
       <Toaster />
     </>

@@ -18,7 +18,7 @@ const useConversation = create((set) => ({
 
   setUnseenMap: (map) => set({ unseenMap: map }),
 
-  // ⬇ Increase unseen count for specific user
+  //  Increase unseen count for specific user
   incrementUnseen: (userId) =>
     set((state) => ({
       unseenMap: {
@@ -27,7 +27,7 @@ const useConversation = create((set) => ({
       },
     })),
 
-  // ⬇ Remove unseen entry for user (reset count)
+  //  Remove unseen entry for user (reset count)
   clearUnseen: (userId) =>
     set((state) => {
       const updated = { ...state.unseenMap };
@@ -35,7 +35,7 @@ const useConversation = create((set) => ({
       return { unseenMap: updated }; 
     }),
 
-      // 🚨 NEW: block state
+      //  NEW: block state
   blockedUsers: [],
 
   setBlockedUsers: (list) => set({ blockedUsers: list }),

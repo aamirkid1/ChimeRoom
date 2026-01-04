@@ -4,16 +4,22 @@ import axios from "axios";
 import { useAuth } from "../context/AuthProvider";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
+
+//  Firebase imports
+import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import { auth } from "../firebase";
+
 function Signup() {
   const [authUser, setAuthUser] = useAuth();
 
-    // 👈 ADDED: avatar state
+  //  Selected avatar state
   const [selectedAvatar, setSelectedAvatar] = React.useState("");
 
   const {
     register,
     handleSubmit,
     watch,
+    reset,
     formState: { errors },
   } = useForm();
 
@@ -24,30 +30,59 @@ function Signup() {
     return value === password || "Passwords do not match";
   };
 
+
+
   const onSubmit = async (data) => {
-    const userInfo = {
-      fullname: data.fullname,
-      email: data.email,
-      password: data.password,
-      confirmPassword: data.confirmPassword,
-       avatar: selectedAvatar || "avatar1.png", // ✅ MODIFIED: include avatar
-    };
-    // console.log(userInfo);
-    await axios
-      .post("/api/user/signup", userInfo)
-      .then((response) => {
-        if (response.data) {
-          toast.success("Signup successful");
+    try {
+      //  Create user in Firebase
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password
+      );
+
+      //  Send verification email
+      // await sendEmailVerification(userCredential.user);
+
+      const actionCodeSettings = {
+        url: "http://localhost:3001/verify-email",
+        handleCodeInApp: true,
+      };
+
+      await sendEmailVerification(
+        userCredential.user,
+        actionCodeSettings
+      );
+
+      toast.success(
+        "Verification email sent. Please verify your email (Check your inbox and spam).",
+        {
+          duration: 6000, 
         }
-        localStorage.setItem("ChatApp", JSON.stringify(response.data));
-        setAuthUser(response.data);
-      })
-      .catch((error) => {
-        if (error.response) {
-          toast.error("Error: " + error.response.data.error);
-        }
-      });
+      );
+
+
+      //  Save user in MongoDB
+      const userInfo = {
+        fullname: data.fullname,
+        email: data.email,
+        avatar: selectedAvatar || "avatar1.png",
+      };
+
+      await axios.post("/api/user/signup", userInfo);
+
+      reset();
+      setSelectedAvatar("");
+
+    } catch (error) {
+      if (error.code === "auth/email-already-in-use") {
+        toast.error("Email already registered. Please login.");
+      } else {
+        toast.error("Signup failed");
+      }
+    }
   };
+
 
   return (
     <div className="h-screen w-screen flex items-center justify-center bg-gradient-to-r from-[#38d39f] to-[#38a4d3]">
@@ -57,6 +92,10 @@ function Signup() {
         <div className="w-1/2 bg-white flex items-center justify-center p-6">
           <img src="/myphoto.png" alt="profile" className="w-72 h-72 object-cover rounded-full shadow-xl" />
         </div>
+
+
+
+        
 
         {/* Right side form */}
         <form
@@ -78,7 +117,6 @@ function Signup() {
             </svg>
             <input
               type="text"
-              
               className="grow bg-transparent outline-none text-black placeholder-gray-400 focus:text-black"
               placeholder="Fullname"
               {...register("fullname", { required: true })}
@@ -110,10 +148,25 @@ function Signup() {
               type="password"
               className="grow bg-transparent outline-none text-black placeholder-gray-400 focus:text-black"
               placeholder="Password"
-              {...register("password", { required: true })}
+              //  {...register("password", { required: true })}
+              {...register("password", {
+                required: "Password is required",
+                minLength: {
+                  value: 6,
+                  message: "Password must be at least 6 characters",
+                },
+              })}
+
             />
           </label>
-          {errors.password && <p className="text-red-500 text-sm">This field is required</p>}
+          {/* {errors.password && <p className="text-red-500 text-sm">This field is required</p>} */}
+
+          {errors.password && (
+            <p className="text-red-500 text-sm">
+              {errors.password.message}
+            </p>
+          )}
+
 
           {/* Confirm Password */}
           <label className="input input-bordered flex items-center gap-2 bg-[#f1f1f1] px-3 py-2 rounded-md">
@@ -134,7 +187,7 @@ function Signup() {
             <p className="text-red-500 text-sm">{errors.confirmPassword.message}</p>
           )}
 
-           {/*  Avatar Selection */}
+          {/* Avatar Selection */}
           <div>
             <p className="text-sm font-semibold text-gray-700 mb-2">Choose an avatar:</p>
             <div className="grid grid-cols-4 gap-3">
@@ -149,15 +202,13 @@ function Signup() {
               ].map((avatarName) => (
                 <img
                   key={avatarName}
-                  // src={/${avatarName}}
-                   src={`/${avatarName}`}
+                  src={`/${avatarName}`}
                   alt={avatarName}
                   onClick={() => setSelectedAvatar(avatarName)}
-                  className={`w-16 h-16 rounded-full cursor-pointer border-4 transition ${
-                    selectedAvatar === avatarName ? "border-blue-500" : "border-gray-300"
-                  }`}
+                  className={`w-16 h-16 rounded-full cursor-pointer border-4 transition ${selectedAvatar === avatarName ? "border-blue-500" : "border-gray-300"
+                    }`}
                 />
-                 ))}
+              ))}
             </div>
           </div>
 
