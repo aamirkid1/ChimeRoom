@@ -8,7 +8,6 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "build": "npm install --prefix Frontend --include=dev && npm run build --prefix Frontend"
-
   },
   "keywords": [
     "MERN"
@@ -22,6 +21,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^4.22.1",
+    "firebase-admin": "^13.6.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.16.0",
     "nodemon": "^3.1.10",
