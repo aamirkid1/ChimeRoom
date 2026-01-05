@@ -29,7 +29,7 @@ const PORT = process.env.PORT || 5000;   // 3001 se 500 kiya
 const URI = process.env.MONGODB_URI;
 
 try {
-   // mongoose.connect(URI);
+       // mongoose.connect(URI);
 mongoose.connect(URI, {
   tls: true,
   tlsAllowInvalidCertificates: true,
@@ -40,7 +40,6 @@ mongoose.connect(URI, {
   console.error("MongoDB connection error:", err);
   process.exit(1); // fail fast so Render restarts cleanly
 });
-
 
 
     console.log("Connected to MongoDB");
@@ -56,13 +55,21 @@ app.use("/api/message", messageRoute);
 
 // ---------------- code for deployment ----------------
 
-if (process.env.NODE_ENV === 'production') {
-  const dirPath = path.resolve();
-  app.use(express.static('./Frontend/dist'));
-  app.get('/*', (req, res) => {
-    res.sendFile(path.resolve(dirPath, './Frontend/dist', 'index.html'));
-  });
-}
+// if (process.env.NODE_ENV === 'production') {
+//   const dirPath = path.resolve();
+//   app.use(express.static('./Frontend/dist'));
+//   app.get('/*', (req, res) => {
+//     res.sendFile(path.resolve(dirPath, './Frontend/dist', 'index.html'));
+//   });
+// }
+
+// Remove the 'if' check so it runs in both dev and prod
+const dirPath = path.resolve();
+app.use(express.static(path.join(dirPath, 'Frontend', 'dist')));
+
+app.get('/*', (req, res) => {
+  res.sendFile(path.resolve(dirPath, 'Frontend', 'dist', 'index.html'));
+});
 
 server.listen(PORT, () => {
   console.log(`Server is Running on port ${PORT}`);
