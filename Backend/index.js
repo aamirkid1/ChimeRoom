@@ -18,13 +18,14 @@ app.use(cookieParser());
 app.use(
   cors({
     origin: [
-      "http://localhost:3001"
+      "http://localhost:3001",
+      "https://chimeroom-chatapp.onrender.com"
     ],
     credentials: true,
   })
 );
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 5000;   // 3001 se 500 kiya hai
 const URI = process.env.MONGODB_URI;
 
 try {
