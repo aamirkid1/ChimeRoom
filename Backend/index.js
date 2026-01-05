@@ -29,7 +29,20 @@ const PORT = process.env.PORT || 5000;   // 3001 se 500 kiya
 const URI = process.env.MONGODB_URI;
 
 try {
-    mongoose.connect(URI);
+   // mongoose.connect(URI);
+mongoose.connect(URI, {
+  tls: true,
+  tlsAllowInvalidCertificates: true,
+  serverSelectionTimeoutMS: 5000,
+})
+.then(() => console.log("Connected to MongoDB"))
+.catch(err => {
+  console.error("MongoDB connection error:", err);
+  process.exit(1); // fail fast so Render restarts cleanly
+});
+
+
+
     console.log("Connected to MongoDB");
 } catch (error) {
     console.log(error);

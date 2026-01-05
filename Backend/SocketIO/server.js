@@ -7,7 +7,8 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "https://chimeroom-chatapp.onrender.com",     //http://localhost:3001
+    origin: "https://chimeroom-chatapp.onrender.com",
+    //origin: "http://localhost:3001",
     methods: ["GET", "POST"],
   },
 });
