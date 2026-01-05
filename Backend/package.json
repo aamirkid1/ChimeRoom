@@ -7,11 +7,9 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "build": "npm install && npm install --prefix Frontend && npm run build --prefix Frontend"
+    "build": "npm install --prefix Frontend && npm run build --prefix Frontend"
   },
-  "keywords": [
-    "MERN"
-  ],
+  "keywords": ["MERN"],
   "author": "Aaqib",
   "license": "ISC",
   "dependencies": {
@@ -23,7 +21,9 @@
     "express": "^4.22.1",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.16.0",
-    "nodemon": "^3.1.10",
     "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   }
 }
