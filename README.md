@@ -115,7 +115,7 @@ Frontend is served from `Frontend/dist` using Express in production.
 
 ---
 
-## 📌 Notes
+##  Notes
 
 * Add your Render domain to **Firebase Authorized Domains**
 * Ensure **MongoDB Atlas IP whitelist** allows Render access
@@ -131,3 +131,6 @@ Frontend is served from `Frontend/dist` using Express in production.
 
 ---
 
+## Author
+ 
+- [Mohd Aaqib](https://github.com/aamirkid1)
