@@ -87,22 +87,98 @@ function Signup() {
 
 
   return (
-    <div className="h-screen w-screen flex items-center justify-center bg-gradient-to-r from-[#38d39f] to-[#38a4d3]">
-      <div className="flex w-[85%] max-w-5xl bg-white rounded-xl overflow-hidden shadow-2xl">
+    <div className="
+min-h-screen
+w-full
+flex
+items-center
+justify-center
+bg-gradient-to-br
+from-[#38d39f]
+via-[#38c9c8]
+to-[#38a4d3]
+px-4
+py-6
+">
+      <div
+  className="
+    flex
+    flex-col
+    md:flex-row
+    w-full
+    max-w-5xl
+    bg-white
+    rounded-[32px]
+    overflow-hidden
+    shadow-2xl
+  "
+>
 
         {/* Left side image */}
-        <div className="w-1/2 bg-white flex items-center justify-center p-6">
-          <img src="/myphoto.png" alt="profile" className="w-72 h-72 object-cover rounded-full shadow-xl" />
-        </div>
+        <div
+  className="
+    hidden
+    md:flex
+    w-1/2
+    bg-white
+    items-center
+    justify-center
+    p-6
+  "
+>
+  <img
+    src="/myphoto.png"
+    alt="profile"
+    className="
+      w-72
+      h-72
+      object-cover
+      rounded-full
+      shadow-2xl
+    "
+  />
+</div>
 
 
 
+<div className="md:hidden flex flex-col items-center mb-6">
+
+  <img
+    src="/myphoto.png"
+    alt="logo"
+    className="
+      w-28
+      h-28
+      rounded-full
+      shadow-2xl
+      mb-4
+    "
+  />
+
+  <h1 className="text-4xl font-bold">
+    <span className="text-[#2ecc71]">
+      Chime
+    </span>
+    <span className="text-[#2c3e50]">
+      Room
+    </span>
+  </h1>
+
+</div>
 
 
         {/* Right side form */}
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="w-1/2 px-10 py-10 space-y-4 bg-white"
+          className="
+w-full
+md:w-1/2
+px-5
+md:px-10
+py-8
+space-y-4
+bg-white
+"
         >
           <h1 className="text-2xl items-center font-bold">
             <span className="text-[#2ecc71]">Chime</span>
@@ -207,8 +283,21 @@ function Signup() {
                   src={`/${avatarName}`}
                   alt={avatarName}
                   onClick={() => setSelectedAvatar(avatarName)}
-                  className={`w-16 h-16 rounded-full cursor-pointer border-4 transition ${selectedAvatar === avatarName ? "border-blue-500" : "border-gray-300"
-                    }`}
+                  className={`
+  w-14 h-14
+  md:w-16 md:h-16
+  rounded-full
+  cursor-pointer
+  border-4
+  transition-all
+  duration-300
+  hover:scale-110
+  ${
+    selectedAvatar === avatarName
+      ? "border-[#2ecc71] scale-110 shadow-lg shadow-green-300"
+      : "border-gray-300"
+  }
+`}
                 />
               ))}
             </div>
@@ -218,7 +307,21 @@ function Signup() {
           <input
             type="submit"
             value="Signup"
-            className="w-full bg-[#2ecc71] text-white font-semibold py-2 rounded-md cursor-pointer hover:bg-[#2d8fbd] transition"
+            className="
+w-full
+bg-gradient-to-r
+from-[#2ecc71]
+to-[#27ae60]
+text-white
+font-bold
+py-3
+rounded-xl
+cursor-pointer
+shadow-lg
+hover:scale-[1.02]
+transition-all
+duration-300
+"
           />
 
           <p className="text-sm mt-3 text-gray-600">

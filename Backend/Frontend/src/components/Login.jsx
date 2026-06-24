@@ -60,19 +60,66 @@ const onSubmit = async (data) => {
 
   return (
     <>
-      <div className="flex h-screen items-center justify-center bg-gray-100">
-        <div className="flex items-center gap-8 bg-white px-10 py-8 rounded-xl shadow-lg">
+      <div
+  className="
+    min-h-screen
+    flex
+    items-center
+    justify-center
+    bg-gradient-to-br
+    from-slate-100
+    via-white
+    to-green-50
+    px-4
+  "
+>
+        <div
+  className="
+    flex flex-col md:flex-row
+    items-center
+    gap-6 md:gap-8
+    bg-white
+    px-4 md:px-10
+    py-6 md:py-8
+    rounded-3xl
+    shadow-2xl
+    w-[95%]
+    max-w-5xl
+  "
+>
 
           {/* Profile Image */}
 
-          <div className="w-1/2 bg-white flex items-center justify-center p-6">
+          <div className="hidden md:flex w-1/2 items-center justify-center p-6">
             <img src="/myphoto.png" alt="profile" className="w-72 h-72 object-cover rounded-full shadow-xl" />
           </div>
+
+          <div className="md:hidden flex flex-col items-center mb-2">
+  <img
+    src="/myphoto.png"
+    alt="logo"
+    className="w-28 h-28 rounded-full shadow-xl"
+  />
+
+  <h1 className="mt-4 text-3xl font-bold">
+    <span className="text-[#2ecc71]">Chime</span>
+    <span className="text-[#2c3e50]">Room</span>
+  </h1>
+</div>
 
           {/* Login Form */}
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="border border-black px-6 py-2 rounded-md space-y-3 w-96"
+            className="
+  border border-gray-200
+  bg-white/90
+  backdrop-blur-lg
+  px-6 py-5
+  rounded-3xl
+  space-y-4
+  w-full
+  md:w-96
+"
           >
             <h1 className="text-2xl items-center font-bold">
               <span className="text-[#2ecc71]">Chime</span>
