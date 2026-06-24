@@ -21,7 +21,7 @@ function App() {
           element={
             authUser ? (
               <div className="flex h-screen">
-                <Logout />
+                {/* <Logout /> */}
                 <Left />
                 <Right />
 

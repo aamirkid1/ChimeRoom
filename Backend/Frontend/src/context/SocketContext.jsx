@@ -25,6 +25,9 @@ export const SocketProvider = ({ children }) => {
   useEffect(() => {
     if (authUser) {
       const socket = io("https://chimeroom-chatapp.onrender.com", {     //http://localhost:5002
+        
+
+        
         query: {
           userId: authUser.user._id, 
         },
@@ -63,8 +66,8 @@ export const SocketProvider = ({ children }) => {
         setSocket(null);
       }
     }
-    // }, [authUser]);
-  }, [authUser, selectedConversation, messages]); //  Added deps: selectedConversation, messages
+    }, [authUser]);
+  // }, [authUser, selectedConversation, messages]); //  Added deps: selectedConversation, messages
   return (
     <socketContext.Provider value={{ socket, onlineUsers }}>
       {children}
